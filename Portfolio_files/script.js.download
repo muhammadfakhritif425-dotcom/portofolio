@@ -1,0 +1,208 @@
+// Mobile menu toggle
+const mobileMenuButton = document.getElementById('mobile-menu-button');
+const mobileMenu = document.getElementById('mobile-menu');
+
+mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+    mobileMenu.classList.toggle('show');
+});
+
+// Close mobile menu when clicking on a link
+const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+mobileMenuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+        mobileMenu.classList.remove('show');
+    });
+});
+
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offsetTop = target.offsetTop - 80; // Account for fixed navbar
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Navbar background change on scroll
+const navbar = document.querySelector('nav');
+let lastScroll = 0;
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.pageYOffset;
+    
+    // Add shadow when scrolling down
+    if (currentScroll > 100) {
+        navbar.classList.add('shadow-2xl');
+    } else {
+        navbar.classList.remove('shadow-2xl');
+    }
+    
+    lastScroll = currentScroll;
+});
+
+// Intersection Observer for fade-in animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+// Observe all sections
+document.querySelectorAll('section').forEach(section => {
+    observer.observe(section);
+});
+
+// Observe skill cards
+document.querySelectorAll('#skill .bg-white').forEach(card => {
+    observer.observe(card);
+});
+
+// Observe project cards
+document.querySelectorAll('#portofolio .bg-white').forEach(card => {
+    observer.observe(card);
+});
+
+// Form validation and submission
+const contactForm = document.querySelector('#kontak form');
+
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Get form values
+        const name = contactForm.querySelector('input[type="text"]').value;
+        const email = contactForm.querySelector('input[type="email"]').value;
+        const subject = contactForm.querySelectorAll('input[type="text"]')[1].value;
+        const message = contactForm.querySelector('textarea').value;
+        
+        // Simple validation
+        if (!name || !email || !subject || !message) {
+            alert('Mohon isi semua field!');
+            return;
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Email tidak valid!');
+            return;
+        }
+        
+        // Success message
+        alert('Terima kasih! Pesan Anda telah terkirim.');
+        contactForm.reset();
+    });
+}
+
+// Active navigation link highlighting
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 100) {
+            current = section.getAttribute('id');
+        }
+    });
+    
+    navLinks.forEach(link => {
+        link.classList.remove('text-gold');
+        if (link.getAttribute('href').slice(1) === current) {
+            link.classList.add('text-gold');
+        }
+    });
+});
+
+// Add hover effect to project cards
+const projectCards = document.querySelectorAll('#portofolio .bg-white');
+projectCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Parallax effect removed to fix layout issues
+
+// Typing effect for hero text (optional enhancement)
+function typeWriter(element, text, speed = 50) {
+    let i = 0;
+    element.innerHTML = '';
+    
+    function type() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Portfolio website loaded successfully!');
+    
+    // Add loading animation complete class
+    document.body.classList.add('loaded');
+});
+
+// Preloader (optional)
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.style.display = 'none';
+    }
+});
+
+// Add scroll-to-top button functionality
+const scrollTopBtn = document.createElement('button');
+scrollTopBtn.innerHTML = '↑';
+scrollTopBtn.className = 'fixed bottom-8 right-8 bg-gold text-white w-12 h-12 rounded-full shadow-lg hover:bg-yellow-600 transition opacity-0 pointer-events-none z-50';
+scrollTopBtn.style.transition = 'opacity 0.3s';
+document.body.appendChild(scrollTopBtn);
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        scrollTopBtn.style.opacity = '1';
+        scrollTopBtn.style.pointerEvents = 'auto';
+    } else {
+        scrollTopBtn.style.opacity = '0';
+        scrollTopBtn.style.pointerEvents = 'none';
+    }
+});
+
+scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
+// Console log for developers
+console.log('%c Portfolio Website ', 'background: #1e40af; color: #fbbf24; font-size: 20px; padding: 10px;');
+console.log('%c Built with HTML, CSS, JavaScript & Tailwind CSS ', 'background: #fbbf24; color: #1e40af; font-size: 12px; padding: 5px;');
